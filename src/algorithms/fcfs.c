@@ -1,1 +1,1 @@
-#include "../../include/algorithms/fcfs.h"
+#include "algorithms/fcfs.h"
