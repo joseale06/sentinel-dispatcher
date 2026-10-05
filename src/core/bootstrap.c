@@ -51,7 +51,7 @@ int init (int argc, char *argv[]) {
             continue;
         }
 
-        TaskControlBlock *new_tcb = tcb_create(id, arrival_time, (Priority)priority, total_burst);
+        TaskControlBlock *new_tcb = TCB_create(id, arrival_time, (Priority)priority, total_burst);
         if (new_tcb == NULL) {
             fprintf(stderr, "[ERROR] Error de memoria para instanciar centinela %d.\n", id);
             queue_destroy(q);
@@ -70,7 +70,7 @@ int init (int argc, char *argv[]) {
         }
 
         if (VERBOSE_MODE) {
-            printf("[DEBUG] TCB creado e insertado -> ID: %d | Arribo: %d | Prioridad: %d | Rafaga Total: %d",
+            printf("[DEBUG] TCB creado e insertado -> ID: %d | Arribo: %d | Prioridad: %d | Rafaga Total: %d\n",
                    new_tcb->id,
                    new_tcb->arrival_time,
                    new_tcb->current_priority,
@@ -79,6 +79,7 @@ int init (int argc, char *argv[]) {
     }
     fclose(file);
     queue_sort(q); // ordenamiento de la estructura temporal para registrar a los centinelas.
+    if (VERBOSE_MODE) queue_print(q);
     
     return EXIT_SUCCESS;
 }

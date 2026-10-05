@@ -2,8 +2,17 @@
 #define CONFIG_H
 #include <stdbool.h>
 
-// Bandera global para habilitar o deshabilitar la traza de depuración detallada.
-extern bool VERBOSE_MODE;
+#define QUANTUM_Q0 = 2; // quantum de tiempo para cola 0 (alta prioridad).
+#define QUANTUM_Q1 = 4; // quantum de tiempo para cola 1 (prioridad media).
+
+extern bool VERBOSE_MODE; // bandera global para la traza de depuración detallada.
+
+/**
+ * @brief Reloj discreto del simulador (Tg).
+ * @details Avanza en unidades enteras (tics de reloj). Gestionado e incrementado
+ *          por el Hilo Maestro durante la simulación.
+ */
+extern int GLOBAL_TIC; 
 
 /** 
 * @brief Parsea y valida los argumentos de la linea de comandos para configurar el entorno.

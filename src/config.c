@@ -4,6 +4,7 @@
 #include "config.h"
 
 bool VERBOSE_MODE = false;
+int GLOBAL_TIC = 0;
 
 char* process_input(int argc, char *argv[]) {
     if (argc < 3) {

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "control_structures/task_control_block.h"
 #include "control_structures/queue.h"
@@ -55,6 +56,61 @@ void queue_destroy(Queue* q) {
     while (!queue_empty(q)) queue_dequeue(q);
 }
 
-void queue_sort(Queue* q) {
-    //
+void queue_sort(Queue* q) { // Ordenamiento Bubble Sort.
+    if (queue_empty(q) || q->front->next == NULL) return;
+    
+    bool swapped;
+    Node* current;
+    Node* last_ptr = NULL;
+
+    do {
+        swapped = false;
+        current = q->front;
+
+        while (current->next != last_ptr) {
+            // evaluamos el tiempo de llegada: si dos procesos llegan en el mismo Tg, no se intercambian,
+            // conservando así su orden de aparición en el archivo de texto.
+            if (current->data->arrival_time > current->next->data->arrival_time) {
+                
+                TaskControlBlock* temp_data = current->data;
+                current->data = current->next->data;
+                current->next->data = temp_data;
+                
+                swapped = true;
+            }
+            current = current->next;
+        }
+        // el elemento más grande ya "burbujeó" hasta el final, por lo que no es necesario revisarlo.
+        last_ptr = current; 
+        
+    } while (swapped);
+}
+
+void queue_print(const Queue* q) {
+    if (queue_empty(q)) {
+        printf("Cola vacía.\n");
+        return;
+    }
+
+    printf("\n================ ESTADO DE LA COLA ================\n");
+    printf("Total de tareas en cola: %zu\n", q->count);
+    printf("----------------------------------------------------------------------\n");
+    printf(" Pos | ID Centinela | T. Arribo (Tg) | Prioridad (Cola) | Ráfaga Total\n");
+    printf("----------------------------------------------------------------------\n");
+
+    Node* current = q->front;
+    int index = 1;
+
+    while (current != NULL) {
+        TaskControlBlock* tcb = current->data;
+        printf(" %02d  | %-12d | %-14d | %-16d | %-12d\n",
+               index++,
+               tcb->id,
+               tcb->arrival_time,
+               tcb->current_priority,
+               tcb->total_burst);
+        current = current->next;
+    }
+
+    printf("======================================================================\n\n");
 }
