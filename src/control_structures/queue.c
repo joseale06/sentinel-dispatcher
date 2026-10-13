@@ -56,6 +56,24 @@ void queue_destroy(Queue* q) {
     while (!queue_empty(q)) queue_dequeue(q);
 }
 
+bool queue_push_front(Queue* q, TaskControlBlock* data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return false;
+    }
+    newNode->data = data;
+
+    if (queue_empty(q)) {
+        newNode->next = NULL;
+        q->front = q->back = newNode;
+    } else {
+        newNode->next = q->front;
+        q->front = newNode;
+    }
+    q->count++;
+    return true;
+}
+
 void queue_sort(Queue* q) { // Ordenamiento Bubble Sort.
     if (queue_empty(q) || q->front->next == NULL) return;
     

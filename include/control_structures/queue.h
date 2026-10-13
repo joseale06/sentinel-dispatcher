@@ -26,6 +26,7 @@ TaskControlBlock* queue_dequeue(Queue* q);
 Node* queue_front(const Queue* q);
 size_t queue_size(const Queue* q);
 void queue_destroy(Queue* q);
+bool queue_push_front(Queue* q, TaskControlBlock* data);
 
 /**
  * @brief Ordena los elementos de la cola por el tiempo de llegada.

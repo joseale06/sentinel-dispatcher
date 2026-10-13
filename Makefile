@@ -1,7 +1,13 @@
 CC 			:= gcc
 # Banderas del compilador. '-Iinclude' incluye las cabeceras desde la raíz de include/ sin rutas relativas.
 # Agregar '-g' para símbolos de depuración (GDB).
-CFLAGS      := -Wall -Wextra -Iinclude -g
+# '-pthread' es obligatorio para compilar con soporte multihilo POSIX.
+CFLAGS      := -Wall -Wextra -std=c99 -pthread -Iinclude 
+
+# Banderas del enlazador.
+# '-pthread' enlaza la biblioteca del sistema libpthread al binario final.
+LDFLAGS 	:= -pthread
+
 SRC_DIR     := src
 OBJ_DIR     := bin
 TARGET_NAME := sentinel-dispatcher
@@ -17,7 +23,7 @@ all: $(TARGET)
 
 $(TARGET) : $(OBJS)
 	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(OBJS) -o $(TARGET)
+	@$(CC) $(OBJS) $(LDFLAGS) -o $(TARGET)
 
 # Regla de patrón. Compila cada '.c' en su correspondiente '.o' dentro de bin/.
 # $@ representa el nombre del archivo objetivo que se está generando (ej. bin/core/main.o)

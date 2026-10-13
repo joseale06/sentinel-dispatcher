@@ -7,9 +7,9 @@
 #include "control_structures/queue.h"
 #include "control_structures/task_control_block.h"
 
-int init (int argc, char *argv[]) {
+Queue* init (int argc, char *argv[]) {
     char *file_path = process_input(argc, argv);
-    if (file_path == NULL) return EXIT_FAILURE;
+    if (file_path == NULL) return NULL;
     
     if (VERBOSE_MODE) {
         printf("[DEBUG] Inicializando sistema. Intentando abrir: %s\n", file_path);
@@ -18,7 +18,7 @@ int init (int argc, char *argv[]) {
     FILE *file = fopen(file_path, "r");
     if (file == NULL) {
         fprintf(stderr, "[ERROR] No se pudo abrir el archivo físico en: %s\n", file_path);
-        return EXIT_FAILURE;
+        return NULL;
     }
 
     if (VERBOSE_MODE) {
@@ -29,7 +29,7 @@ int init (int argc, char *argv[]) {
     if (q == NULL) {
         fprintf(stderr, "[ERROR] Fallo de asignacion de memoria.\n");
         fclose(file);
-        return EXIT_FAILURE;
+        return NULL;
     }
     queue_init(q);
 
@@ -57,7 +57,7 @@ int init (int argc, char *argv[]) {
             queue_destroy(q);
             free(q);
             fclose(file);
-            return EXIT_FAILURE;
+            return NULL;
         }
 
         if (!queue_enqueue(q, new_tcb)) {
@@ -66,7 +66,7 @@ int init (int argc, char *argv[]) {
             queue_destroy(q);
             free(q);
             fclose(file);
-            return EXIT_FAILURE;
+            return NULL;
         }
 
         if (VERBOSE_MODE) {
@@ -81,5 +81,5 @@ int init (int argc, char *argv[]) {
     queue_sort(q); // ordenamiento de la estructura temporal para registrar a los centinelas.
     if (VERBOSE_MODE) queue_print(q);
     
-    return EXIT_SUCCESS;
+    return q;
 }
