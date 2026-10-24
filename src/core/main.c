@@ -2,10 +2,20 @@
 #include <stdlib.h>
 #include "config.h"
 #include "core/bootstrap.h"
+#include "scheduler/scheduler.h"
 
 int main(int argc, char *argv[]) {
-    int status = init(argc, argv);
-    if (status == EXIT_FAILURE) return EXIT_FAILURE;
+    Queue* temporal_queue = init(argc, argv);
+    if (temporal_queue == NULL) return EXIT_FAILURE;
 
+    if (!scheduler_init(temporal_queue)) {
+        queue_destroy(temporal_queue);
+        free(temporal_queue);
+        return EXIT_FAILURE;
+    }
+
+    scheduler_destroy();
+    queue_destroy(temporal_queue);
+    free(temporal_queue);
     return EXIT_SUCCESS;
 }

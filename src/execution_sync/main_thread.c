@@ -1,6 +1,5 @@
 #include "execution_sync/main_thread.h"
-#include "control_structures/task_control_block.h"
-#include <stdio.h>
+#include "scheduler/scheduler.h"
 
 int global_tick = 0;
 bool simulation_finished = false;
@@ -13,6 +12,7 @@ bool master_done = false;
 bool worker_done = true; 
 
 void* main_thread_routine(void* arg) {
+    (void)arg;
     
     while (!simulation_finished) {
         pthread_mutex_lock(&tick_mutex);
@@ -26,12 +26,7 @@ void* main_thread_routine(void* arg) {
             break;
         }
         
-        // 1. Verificar qué centinelas tienen arrivaltime == global_tick
-        // 2. Encolarlos en las estructuras (llamando a dispatcher.h / scheduler.h)
-        // 3. Imprimir el log de ARRIVAL si corresponde
-        
-        // La lógica de impresión Verbose se maneja aquí al final del tic
-
+        scheduler_on_tick(global_tick);
         global_tick++;
 
         worker_done = false;
