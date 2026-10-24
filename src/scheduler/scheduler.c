@@ -1,5 +1,4 @@
 #include "scheduler/scheduler.h"
-#include "algorithms/fcfs.h"
 #include "algorithms/round_robin.h"
 #include "scheduler/dispatcher.h"
 #include <stdio.h>
@@ -37,7 +36,7 @@ void scheduler_destroy(void) {
     temporal_queue = NULL;
 }
 
-void scheduler_set_current_task(TaskControlBlock* task) {
+static void scheduler_set_current_task(TaskControlBlock* task) {
     current_task = task;
     if (current_task != NULL) {
         current_task->current_status = RUNNING;
@@ -70,7 +69,7 @@ void scheduler_on_tick(int tick) {
     }
 }
 
-void scheduler_execute_tick(int tick) {
+TaskControlBlock* scheduler_dispatch(void) {
     if (current_task == NULL) {
         int priority;
         for (priority = HIGH; priority <= LOW; priority++) {
@@ -81,12 +80,17 @@ void scheduler_execute_tick(int tick) {
         }
     }
 
+    return current_task;
+}
+
+TaskControlBlock* scheduler_current_task(void) {
+    return current_task;
+}
+
+void scheduler_finish_cpu_tick(int tick) {
     if (current_task == NULL) {
         return;
     }
-
-    fcfs_execute_tick(current_task);
-    current_task->used_quantum++;
 
     if (current_task->remaining_burst == 0) {
         current_task->current_status = FINISHED;
@@ -104,6 +108,19 @@ void scheduler_execute_tick(int tick) {
                current_task->id);
         dispatcher_release(current_task);
         current_task = NULL;
+    }
+}
+
+void scheduler_update_waiting_metrics(void) {
+    int priority;
+    Node* node;
+
+    for (priority = HIGH; priority <= LOW; priority++) {
+        node = queue_front(&ready_queues[priority]);
+        while (node != NULL) {
+            node->data->wait_time++;
+            node = node->next;
+        }
     }
 }
 

@@ -8,8 +8,10 @@
 bool scheduler_init(Queue* temporal_queue);
 void scheduler_destroy(void);
 void scheduler_on_tick(int tick);
-void scheduler_execute_tick(int tick);
-void scheduler_set_current_task(TaskControlBlock* task);
+TaskControlBlock* scheduler_dispatch(void);
+TaskControlBlock* scheduler_current_task(void);
+void scheduler_finish_cpu_tick(int tick);
+void scheduler_update_waiting_metrics(void);
 bool scheduler_has_finished(void);
 
 #endif
