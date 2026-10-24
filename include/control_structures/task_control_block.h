@@ -15,7 +15,7 @@ typedef enum {
     LOW
 } Priority;
 
-typedef struct {
+typedef struct TaskControlBlock {
     int id;
     ExecutionStatus current_status;
     Priority current_priority;
@@ -26,5 +26,7 @@ typedef struct {
     int wait_time;
     int return_time;
 } TaskControlBlock;
+
+TaskControlBlock* TCB_create(int id, int arrival_time, Priority priority, int total_burst);
 
 #endif
