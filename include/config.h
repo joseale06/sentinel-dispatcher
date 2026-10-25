@@ -2,8 +2,8 @@
 #define CONFIG_H
 #include <stdbool.h>
 
-#define QUANTUM_Q0 = 2; // quantum de tiempo para cola 0 (alta prioridad).
-#define QUANTUM_Q1 = 4; // quantum de tiempo para cola 1 (prioridad media).
+#define QUANTUM_Q0 2 // quantum de tiempo para cola 0 (alta prioridad).
+#define QUANTUM_Q1 4 // quantum de tiempo para cola 1 (prioridad media).
 
 extern bool VERBOSE_MODE; // bandera global para la traza de depuración detallada.
 

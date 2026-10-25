@@ -12,22 +12,22 @@ Queue* init (int argc, char *argv[]) {
     if (file_path == NULL) return NULL;
     
     if (VERBOSE_MODE) {
-        printf("[DEBUG] Inicializando sistema. Intentando abrir: %s\n", file_path);
+        printf("[DEBUG] Initializing system. Attempting to open: %s\n", file_path);
     }
 
     FILE *file = fopen(file_path, "r");
     if (file == NULL) {
-        fprintf(stderr, "[ERROR] No se pudo abrir el archivo físico en: %s\n", file_path);
+        fprintf(stderr, "[ERROR] The physical file could not be opened at: %s\n", file_path);
         return NULL;
     }
 
     if (VERBOSE_MODE) {
-        printf("[DEBUG] Archivo abierto exitosamente. Procesando datos...\n");
+        printf("[DEBUG] File successfully opened. Processing data...\n");
     }
 
     Queue* q = (Queue*)malloc(sizeof(Queue));
     if (q == NULL) {
-        fprintf(stderr, "[ERROR] Fallo de asignacion de memoria.\n");
+        fprintf(stderr, "[ERROR] Memory allocation error.\n");
         fclose(file);
         return NULL;
     }
@@ -42,18 +42,18 @@ Queue* init (int argc, char *argv[]) {
         int parsed_items = sscanf(line, "%d %d %d %d", &arrival_time, &id, &priority, &total_burst);
         
         if (parsed_items != 4) {
-            fprintf(stderr, "[WARN] Linea con formato invalido omitida: %s", line);
+            fprintf(stderr, "[WARN] Line with invalid format omitted: %s", line);
             continue;
         }
 
         if (priority < 0 || priority > 2 || total_burst <= 0 || arrival_time < 0) {
-            fprintf(stderr, "[WARN] Centinela con valores fuera de rango omitido: ID %d\n", id);
+            fprintf(stderr, "[WARN] Sentinel with out-of-range values omitted: ID%d\n", id);
             continue;
         }
 
         TaskControlBlock *new_tcb = TCB_create(id, arrival_time, (Priority)priority, total_burst);
         if (new_tcb == NULL) {
-            fprintf(stderr, "[ERROR] Error de memoria para instanciar centinela %d.\n", id);
+            fprintf(stderr, "[ERROR] Memory allocation error.\n");
             queue_destroy(q);
             free(q);
             fclose(file);
@@ -61,7 +61,7 @@ Queue* init (int argc, char *argv[]) {
         }
 
         if (!queue_enqueue(q, new_tcb)) {
-            fprintf(stderr, "[ERROR] Fallo al registrar centinela %d en estructura temporal.\n", id);
+            fprintf(stderr, "[ERROR] Sentinel %d could not be registered in the temporal structure.\n", id);
             free(new_tcb);
             queue_destroy(q);
             free(q);
@@ -70,7 +70,7 @@ Queue* init (int argc, char *argv[]) {
         }
 
         if (VERBOSE_MODE) {
-            printf("[DEBUG] TCB creado e insertado -> ID: %d | Arribo: %d | Prioridad: %d | Rafaga Total: %d\n",
+            printf("[DEBUG] TCB created and inserted -> ID: %d | Arrival: %d | Priority: %d | Total Burst: %d\n",
                    new_tcb->id,
                    new_tcb->arrival_time,
                    new_tcb->current_priority,

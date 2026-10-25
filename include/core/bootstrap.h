@@ -4,7 +4,7 @@
 #include "control_structures/queue.h"
 
 /**
- * @brief Inicializa el subsistema de carga y orquesta la lectura de escenarios.
+ * @brief Inicializa el subsistema de carga y devuelve la cola temporal.
  * @details Gestiona el parseo de argumentos CLI, valida la existencia del archivo físico,
  *          reserva la memoria para una estructura temporal que almacena los centinelas y 
  *          valida los datos recibidos antes de comenzar la simulación.
