@@ -8,14 +8,14 @@ int GLOBAL_TIC = 0;
 
 char* process_input(int argc, char *argv[]) {
     if (argc < 3) {
-        fprintf(stderr, "[ERROR] Faltan argumentos.\n");
+        fprintf(stderr, "[ERROR] Missing arguments.\n");
         return NULL;
     }
 
     if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "-verbose") == 0) {
         VERBOSE_MODE = true;
         if (argc < 4 || strcmp(argv[2], "--input") != 0) {
-            fprintf(stderr, "[ERROR] Sintaxis inválida tras flag verbose.\n");
+            fprintf(stderr, "[ERROR] Invalid syntax after the verbose flag.\n");
             return NULL;
         }
         return argv[3];
@@ -24,6 +24,6 @@ char* process_input(int argc, char *argv[]) {
         return argv[2];
     } 
     
-    fprintf(stderr, "[ERROR] Argumento inicial no reconocido.\n");
+    fprintf(stderr, "[ERROR] Unrecognized initial argument.\n");
     return NULL;
 }

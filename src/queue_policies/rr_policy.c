@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "queue_policies/rr_policy.h"
 #include "config.h"
 

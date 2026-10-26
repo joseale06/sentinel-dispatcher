@@ -6,6 +6,7 @@
 #include "scheduler/scheduler.h"
 #include "execution_sync/main_thread.h"
 #include "execution_sync/work_thread.h"
+#include "config.h"
 
 int main(int argc, char *argv[]) {
     Queue* temporal_queue = init(argc, argv);
@@ -16,6 +17,10 @@ int main(int argc, char *argv[]) {
         free(temporal_queue);
         return EXIT_FAILURE;
     }
+
+    printf("Fixed parameters: Queue 0 [Q=%d] | Queue 1 [Q=%d] | Queue 2 [FCFS]\n\n",
+           QUANTUM_Q0,
+           QUANTUM_Q1);
 
     // definición de los identificadores de los hilos POSIX.
     pthread_t master_thread, worker_thread;
@@ -41,6 +46,7 @@ int main(int argc, char *argv[]) {
     pthread_join(master_thread, NULL);
     pthread_join(worker_thread, NULL);
 
+    scheduler_print_metrics();
     scheduler_destroy();
     queue_destroy(temporal_queue);
     free(temporal_queue);

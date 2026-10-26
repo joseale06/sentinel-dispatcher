@@ -48,17 +48,33 @@ void* work_thread_routine(void* arg) {
 
         // evaluación del centinela que ejecutó en el tic anterior
         if (active_task != NULL) {
+            Queue* target_q = scheduler_get_queue(active_task->current_priority);
+            bool expired = round_robin_quantum_expired(active_task);
+            bool peers_waiting = !queue_empty(target_q);
+            bool preempted = should_preempt(active_task);
+
             if (active_task->remaining_burst == 0) {
-                // Tarea terminada en el tic anterior -> Imprime COMPLETED y libera memoria
+                // Caso de finalización: la tarea agotó su ráfaga en el tic anterior.
+                // Tarea terminada -> Registra métricas globales, imprime COMPLETED y libera memoria.
+                scheduler_record_completion(active_task, GLOBAL_TIC);
                 dispatcher_finish_task(active_task_ptr, GLOBAL_TIC);
-            } else if (round_robin_quantum_expired(active_task)) {
-                // Fase 2: Expiración de quantum -> Rota al final de su cola
-                Queue* target_q = scheduler_get_queue(active_task->current_priority);
+            } else if (expired && peers_waiting) {
+                // Rotación RR: Agotó su quantum  hay tareas esperando en su mismo nivel de prioridad.
+                // Rota al final de la cola con quantum = 0.
                 dispatcher_quantum_expired(active_task_ptr, target_q, GLOBAL_TIC);
-            } else if (should_preempt(active_task)) {
-                // Fase 3: Expropiación -> Desaloja a la cabeza de su cola
-                Queue* target_q = scheduler_get_queue(active_task->current_priority);
+            } else if (preempted) {
+                // Expropiación por Prioridad: La admisión de este tic colocó tareas en una cola 
+                // superior. Se desaloja a la cabeza de su cola.
+                // Caso borde: si simultáneamente había agotado su quantum, se reinicia a 0
+                // para que al retomar la CPU posteriormente cuente con una cuota fresca.
+                if (expired) active_task->used_quantum = 0;
+                
                 dispatcher_preempt(active_task_ptr, target_q, GLOBAL_TIC);
+            } else if (expired) {
+                // Renovación Silenciosa: Agotó su quantum, pero está solo en su
+                // nivel y nadie superior lo desaloja. Se renueva la cuota sin generar
+                // cambio de contexto ni imprimir trazas.
+                active_task->used_quantum = 0;
             }
         }
 

@@ -19,3 +19,18 @@ TaskControlBlock* TCB_create(int id, int arrival_time, Priority priority, int to
 
     return tcb;
 }
+
+const char* TCB_get_priority(const TaskControlBlock* task) {
+    if (task == NULL) return "Unknown";
+    
+    switch (task->id / 100) {
+        case 1:
+            return "Command";
+        case 2:
+            return "Driller";
+        case 3:
+            return "Heavy";
+        default:
+            return "Unknown";
+    }
+}

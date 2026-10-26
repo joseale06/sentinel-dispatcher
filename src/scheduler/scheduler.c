@@ -5,6 +5,9 @@
 static TaskControlBlock* current_task = NULL;
 static Queue ready_queues[3];
 static Queue* temporal_queue = NULL;
+static int completed_tasks = 0;
+static int total_wait_time = 0;
+static int simulation_time = 0;
 
 bool scheduler_init(Queue* input_queue) {
     if (input_queue == NULL) return false;
@@ -14,6 +17,9 @@ bool scheduler_init(Queue* input_queue) {
     queue_init(&ready_queues[MEDIUM]);
     queue_init(&ready_queues[LOW]);
     current_task = NULL;
+    completed_tasks = 0;
+    total_wait_time = 0;
+    simulation_time = 0;
     return true;
 }
 
@@ -51,10 +57,10 @@ void scheduler_on_tick(int tick) {
             free(task);
             continue;
         }
-        printf("[T-%04d] ARRIVAL: Sentinel ID: %d -> Q%d\n",
+        printf("[T-%04d] ARRIVAL: Sentinel ID: %d [Type: %s]\n",
                tick,
                task->id,
-               task->current_priority);
+               TCB_get_priority(task));
     }
 }
 
@@ -102,4 +108,31 @@ bool scheduler_has_finished(void) {
     }
     
     return true;
+}
+
+void scheduler_record_completion(const TaskControlBlock* task, int tick) {
+    if (task == NULL) {
+        return;
+    }
+
+    completed_tasks++;
+    total_wait_time += task->wait_time;
+    if (tick > simulation_time) {
+        simulation_time = tick;
+    }
+}
+
+void scheduler_print_metrics(void) {
+    double throughput = simulation_time > 0
+        ? (double)completed_tasks / simulation_time
+        : 0.0;
+    double average_waiting = completed_tasks > 0
+        ? (double)total_wait_time / completed_tasks
+        : 0.0;
+
+    printf("\n==================== GLOBAL PERFORMANCE METRICS ====================\n");
+    printf("- Total Simulation Time : %d clock ticks.\n", simulation_time);
+    printf("- System Throughput : %.2f sentinels/tick.\n", throughput);
+    printf("- Average Waiting Time : %.2f ticks.\n", average_waiting);
+    printf("====================================================================\n");
 }

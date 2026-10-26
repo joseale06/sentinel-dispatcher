@@ -29,4 +29,6 @@ typedef struct TaskControlBlock {
 
 TaskControlBlock* TCB_create(int id, int arrival_time, Priority priority, int total_burst);
 
+const char* TCB_get_priority(const TaskControlBlock* task);
+
 #endif

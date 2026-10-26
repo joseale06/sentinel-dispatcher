@@ -106,14 +106,14 @@ void queue_sort(Queue* q) { // Ordenamiento Bubble Sort.
 
 void queue_print(const Queue* q) {
     if (queue_empty(q)) {
-        printf("Cola vacía.\n");
+        printf("Queue is empty.\n");
         return;
     }
 
-    printf("\n================ ESTADO DE LA COLA ================\n");
-    printf("Total de tareas en cola: %zu\n", q->count);
+    printf("\n==================== QUEUE STATE ====================\n");
+    printf("Total tasks in queue: %zu\n", q->count);
     printf("----------------------------------------------------------------------\n");
-    printf(" Pos | ID Centinela | T. Arribo (Tg) | Prioridad (Cola) | Ráfaga Total\n");
+    printf(" Pos | Sentinel ID | Arrival Time (Tg) | Queue Priority | Total Burst\n");
     printf("----------------------------------------------------------------------\n");
 
     Node* current = q->front;

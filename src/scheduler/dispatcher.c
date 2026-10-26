@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scheduler/dispatcher.h"
+#include "queue_policies/rr_policy.h"
 
 void dispatcher_context_switch(TaskControlBlock** cpu_task, Queue* source_queue) {
     if (source_queue == NULL || queue_empty(source_queue)) return;
@@ -12,7 +13,10 @@ void dispatcher_context_switch(TaskControlBlock** cpu_task, Queue* source_queue)
 void dispatcher_quantum_expired(TaskControlBlock** cpu_task, Queue* target_queue, int current_tick) {
     if (*cpu_task == NULL) return;
 
-    printf("[T-%04d] QUANTUM_EXPIRED: Sentinel %d yields CPU via RR rotation\n", current_tick, (*cpu_task)->id);
+    printf("[T-%04d] QUANTUM_EXPIRED: Sentinel %d yields CPU via RR rotation (Q=%d)\n", 
+        current_tick, 
+        (*cpu_task)->id,
+        round_robin_quantum((*cpu_task)->current_priority));
     
     (*cpu_task)->current_status = READY;
     (*cpu_task)->used_quantum = 0;
